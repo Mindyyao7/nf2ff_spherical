@@ -19,3 +19,5 @@ Using [plotPlanarNFData](plotPlanarNFData.m) and [plotCylindricalNFData](plotCyl
 
 Using the [TransformationResults](TransformationResults.m) function, the results of a specific scan can be visualized in 3D either in cartesian or spherical coordinates. 
 Additionally the difference between the two pattern is plotted.
+
+
