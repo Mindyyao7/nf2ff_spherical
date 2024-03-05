@@ -81,80 +81,80 @@ data_nf = table(r, data.theta/180*pi, data.phi/180*pi, [Er, Etheta_complex, Ephi
 data_nf.Properties.VariableNames = {'r' 'theta' 'phi' 'E' 'Eabs'};
 data_nf = data_nf(704:1387, :);
 
-%% Plot NF
-[theta, phi] = meshgrid(unique(data_nf.theta), unique(data_nf.phi));
-for i = 1:1:37
-    for j = 1:1:19
-        Etheta(i,j) = data_nf.E(19*(i-1)+j,2);
-    end
-end
+% %% Plot NF
+% [theta, phi] = meshgrid(unique(data_nf.theta), unique(data_nf.phi));
+% %% rearrange
+% for i = 1:1:37
+%     for j = 1:1:19
+%         Etheta(i,j) = data_nf.E(19*(i-1)+j,2);
+%     end
+% end
+% 
+% for a = 1:1:37
+%     for b = 1:1:19
+%         Ephi(a,b) = data_nf.E(19*(a-1)+b, 3);
+%     end
+% end
 
-for a = 1:1:37
-    for b = 1:1:19
-        Ephi(a,b) = data_nf.E(19*(a-1)+b, 3);
-    end
-end
+% %% NF at a glance
+% figure;
+% subplot(1,2,1);
+% % Etheta = reshape(10*log10(abs(Etheta_complex)),);
+% surf(theta, phi, 10*log10(abs(Etheta)));
+% title(sprintf('f = %f GHz',f/1000000000));
+% xlabel('\theta (rad)');
+% ylabel('\phi (rad)');
+% zlabel('|Etheta| (dBi)');
+% view(-37.5,30);
+% shading flat;
+% colorbar;
+% 
+% subplot(1,2,2);
+% % Etheta = reshape(10*log10(abs(Etheta_complex)),);
+% surf(theta, phi, 10*log10(abs(Ephi)));
+% title(sprintf('f = %f GHz',f/1000000000));
+% xlabel('\theta (rad)');
+% ylabel('\phi (rad)');
+% zlabel('|Ephi| (dBi)');
+% view(-37.5,30);
+% shading flat;
+% colorbar;
 
-% NF at a glance
-figure;
-subplot(1,2,1);
-Etheta = reshape(10*log10(abs(Etheta_complex)),);
-surf(theta, phi, 10*log10(abs(Etheta)));
-title(sprintf('f = %f GHz',f/1000000000));
-xlabel('\theta (rad)');
-ylabel('\phi (rad)');
-zlabel('|Etheta| (dBi)');
-view(-37.5,30);
-shading flat;
-colorbar;
-
-subplot(1,2,2);
-Etheta = reshape(10*log10(abs(Etheta_complex)),);
-surf(theta, phi, 10*log10(abs(Ephi)));
-title(sprintf('f = %f GHz',f/1000000000));
-xlabel('\theta (rad)');
-ylabel('\phi (rad)');
-zlabel('|Ephi| (dBi)');
-view(-37.5,30);
-shading flat;
-colorbar;
-
-% fake data
-f = 60*10^9;
-R = 0.005; %radius for the antenna
-k = 2*pi*f/physconst('LightSpeed');
-n = (k*R+0.045*(k*R)^(1/3)*(60)); % 11 ish
-dtheta_nf = 18;
-dphi_nf = 36;
-theta = (0:dtheta_nf:180)*pi/180; % length will be 10
-theta = reshape(theta, [length(theta), 1]);
-phi = (0:dphi_nf:360)*pi/180; % length 10\
-phi = reshape(phi, [length(phi), 1]);
-r = 0.06*ones(length(phi), 1);
-
-N = length(phi); % Number of random complex numbers
-Etheta = 5*rand(N, 1) + 5i * rand(N, 1);
-
-Ephi complementary to Etheta
-Ephi = (rand(N, 1) + 1i * rand(N, 1));
-Er = 1*ones(length(Ephi), 1);
-Eabs = sqrt(Ephi.^2+Etheta.^2+Er.^2);
-data_nf = table(r, theta, phi, [Er, Etheta, Ephi], Eabs);
-data_nf.Properties.VariableNames = {'r' 'theta' 'phi' 'E' 'Eabs'};
-data_nf_struct = table2struct(data_nf_table);
-data_nf = num2cell(data_nf_table);
+% %% fake data
+% f = 60*10^9;
+% R = 0.005; %radius for the antenna
+% k = 2*pi*f/physconst('LightSpeed');
+% n = (k*R+0.045*(k*R)^(1/3)*(60)); % 11 ish
+% dtheta_nf = 18;
+% dphi_nf = 36;
+% theta = (0:dtheta_nf:180)*pi/180; % length will be 10
+% theta = reshape(theta, [length(theta), 1]);
+% phi = (0:dphi_nf:360)*pi/180; % length 10\
+% phi = reshape(phi, [length(phi), 1]);
+% r = 0.06*ones(length(phi), 1);
+% 
+% N = length(phi); % Number of random complex numbers
+% Etheta = 5*rand(N, 1) + 5i * rand(N, 1);
+% 
+% % Ephi complementary to Etheta
+% Ephi = (rand(N, 1) + 1i * rand(N, 1));
+% Er = 1*ones(length(Ephi), 1);
+% Eabs = sqrt(Ephi.^2+Etheta.^2+Er.^2);
+% data_nf = table(r, theta, phi, [Er, Etheta, Ephi], Eabs);
+% data_nf.Properties.VariableNames = {'r' 'theta' 'phi' 'E' 'Eabs'};
+% % data_nf_struct = table2struct(data_nf_table);
+% % data_nf = num2cell(data_nf_table);
 
 
 %% Transnformation Start
 % Wave Number
-
+lambda = physconst('LightSpeed')/f;
 k0 = 2*pi/lambda;
-
 % Radius of Measurement Sphere
 A = mean(data_nf.r);
 
 theta = data_nf.theta;
-phi = mod(phi, 2*pi);
+phi = data_nf.phi;
 Etheta = data_nf.E(:,2);
 Ephi = data_nf.E(:,3);
 
@@ -188,20 +188,7 @@ for s = 1:2
 
         % Compute Far-Field 
         M = repmat((-n:n), length(theta_ff), 1);
-        % Helper Functions
-        delta = @(s,sigma) 0.5*(1+(-1)^(s+sigma));
-
-        % Theta Function
-        T = @(s,m,n,theta) delta(s,1)*1j*m./sin(theta) .* associatedLegendre(n,cos(theta))...
-                           + delta(s,2).*associatedLegendreDerivative(n,cos(theta));
-        % Phi Function
-        P = @(m,phi) exp(1j*m.*repmat(phi,1,size(m,2)));
-
-        C = 1/(k0*A) * (-1j)^(n+delta(s,1)) * exp(1j*k0*A) *P(M,phi_ff);
-        % Theta Component
-        xtheta = C .* T(s,M,n,theta_ff);
-        % Phi Component
-        xphi = C .* (-1)^s .* T(s+1,M,n,theta_ff);
+        [xtheta,xphi] = sphericalVectorWaveFunctionFarField(s,M,n,r_ff,theta_ff,phi_ff,k0);
 
         Etheta_ff = Etheta_ff + sum(repmat(q, 1, length(theta_ff))' .* xtheta, 2);
         Ephi_ff = Ephi_ff + sum(repmat(q, 1, length(theta_ff))' .* xphi, 2);

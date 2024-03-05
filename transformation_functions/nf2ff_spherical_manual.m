@@ -1,12 +1,12 @@
 function [data_nf2ff] = nf2ff_spherical_manual(data_nf,f,theta_range,phi_range)
 
-% % Wave Number
-% lambda = physconst('LightSpeed')/f;
-% k0 = 2*pi/lambda;
-% % Antenna minimal sphere radius
-% r0 = 2/3*mean(data_nf.r);
-% % Radius of Measurement Sphere
-% A = mean(data_nf.r);
+% Wave Number
+lambda = physconst('LightSpeed')/f;
+k0 = 2*pi/lambda;
+% Antenna minimal sphere radius
+r0 = 2/3*mean(data_nf.r);
+% Radius of Measurement Sphere
+A = mean(data_nf.r);
 theta = data_nf.theta;
 phi = data_nf.phi;
 Etheta = data_nf.E(:,2);
